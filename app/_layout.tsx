@@ -13,7 +13,6 @@ export default function RootLayout() {
         name="splashscreen" 
         options={{ headerShown: false }} 
       />
-      <Stack.Screen name="MainScreen" options={{ title: "Accueil" }} />
     </Stack>
   );
 }

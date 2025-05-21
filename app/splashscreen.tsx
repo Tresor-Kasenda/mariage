@@ -56,12 +56,14 @@ const SplashScreen = () => {
         duration: 100,
         useNativeDriver: true,
       }).start();
-      router.replace('/MainScreen');
+        // Navigate to the InvitationScreen page after the animation
+        router.replace('/InvitationScreen');
     });
   };
 
   const handleSkip = () => {
-    router.replace('/MainScreen');
+    // Navigate to the InvitationScreen page
+    router.replace('/InvitationScreen');
   };
 
   return (
@@ -72,9 +74,9 @@ const SplashScreen = () => {
     >
       <Stack.Screen options={{ headerShown: false }} />
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-        <Text 
-            className='text-white text-base font-semibold'
-        >Passer</Text>
+        <Text className='text-white text-base font-semibold'>
+            Passer
+        </Text>
       </TouchableOpacity>
 
       <View className='flex-1 justify-center items-center w-full space-y-10'>
