@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { Animated, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface WeddingActivity {
   id: string;
@@ -25,9 +25,9 @@ interface WeddingEvent {
   activities: WeddingActivity[];
 }
 
-// Couleurs d'amour vives pour les activités
+// Sample data - in a real app, this would come from an API
 const weddingEvent: WeddingEvent = {
-  eventName: "Mariage de Trésor & Rosalinda",
+  eventName: "Mariage de Trésor & Marie",
   eventDate: new Date("2025-06-29"),
   activities: [
     {
@@ -38,7 +38,7 @@ const weddingEvent: WeddingEvent = {
       location: "Mairie de Bordeaux",
       description: "Cérémonie officielle à la mairie",
       icon: "document-text",
-      color: "#e11d48", // Rouge vif
+      color: "#9333ea",
       additionalInfo: "Tenue formelle recommandée"
     },
     {
@@ -49,7 +49,7 @@ const weddingEvent: WeddingEvent = {
       location: "Église Saint-André",
       description: "Cérémonie religieuse suivie de la sortie des mariés",
       icon: "heart",
-      color: "#be185d", // Rose foncé
+      color: "#9333ea",
       additionalInfo: "Veuillez arriver 15 minutes avant le début"
     },
     {
@@ -60,7 +60,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Jardins",
       description: "Cocktail dans les jardins du château avec séance photo",
       icon: "wine",
-      color: "#db2777", // Rose vif
+      color: "#f472b6",
       additionalInfo: "Boissons et amuse-bouches servis"
     },
     {
@@ -71,7 +71,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Grand Salon",
       description: "Dîner gastronomique avec discours et animations",
       icon: "restaurant",
-      color: "#f43f5e", // Rose-rouge
+      color: "#fbbf24",
       additionalInfo: "Menu gastronomique 3 services",
       menu: {
         starter: "Foie gras mi-cuit et chutney de figues",
@@ -87,7 +87,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Salle de Bal",
       description: "Ouverture du bal par les mariés suivie de la fête",
       icon: "musical-notes",
-      color: "#a21caf", // Violet vif
+      color: "#ec4899",
       additionalInfo: "Open bar et snacks de minuit disponibles"
     },
     {
@@ -98,7 +98,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Terrasse",
       description: "Brunch décontracté pour les invités qui restent",
       icon: "cafe",
-      color: "#c026d3", // Fuchsia
+      color: "#60a5fa",
       additionalInfo: "Tenue décontractée bienvenue"
     }
   ]
@@ -123,28 +123,13 @@ const ScheduleScreen = () => {
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  // Animation de l'ouverture des details
-  const [animation] = useState(new Animated.Value(0));
 
-  // Toggle activity expansion avec animation
+  // Toggle activity expansion
   const toggleActivity = (activityId: string): void => {
     if (expandedActivityId === activityId) {
-      // Animation pour fermer
-      Animated.timing(animation, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true
-      }).start();
-      setTimeout(() => setExpandedActivityId(null), 300);
+      setExpandedActivityId(null);
     } else {
       setExpandedActivityId(activityId);
-      // Animation pour ouvrir
-      Animated.spring(animation, {
-        toValue: 1,
-        friction: 7,
-        tension: 40,
-        useNativeDriver: true
-      }).start();
     }
   };
 
@@ -174,189 +159,129 @@ const ScheduleScreen = () => {
   }, []);
 
   return (
-    <View className="flex-1 bg-rose-50">
-      {/* En-tête avec dégradé de couleurs vives */}
-      <View className="bg-gradient-to-r from-fuchsia-600 via-pink-600 to-rose-500 py-6 px-4 rounded-b-3xl shadow-xl">
-        <View className="bg-white/20 rounded-xl p-4 mb-2 mt-14 border border-white/30 backdrop-blur-sm">
-          <Text className="text-white text-xl font-bold">{weddingEvent.eventName}</Text>
+    <View className="flex-1 bg-[#fef3c7]">
+      {/* En-tête */}
+      <View className="bg-[#fef3c7] py-6 px-4 rounded-b-xl">
+        <View className="bg-primary/20 rounded-xl p-4 mb-2 mt-14">
+          <Text className="text-primary text-lg font-bold">{weddingEvent.eventName}</Text>
           <View className="flex-row items-center mt-1">
-            <Ionicons name="heart" size={14} color="white" style={{ opacity: 0.8, marginRight: 4 }} />
-            <Text className="text-white opacity-90 text-sm">{formatDate(weddingEvent.eventDate)}</Text>
+            <Ionicons name="calendar" size={14} color="white" style={{ opacity: 0.8, marginRight: 4 }} />
+            <Text className="text-primary opacity-90 text-sm">{formatDate(weddingEvent.eventDate)}</Text>
           </View>
         </View>
       </View>
       
-      {/* Timeline avec animations */}
+      {/* Timeline */}
       <ScrollView className="flex-1 px-4 py-6">
         <View className="relative">
-          {/* Ligne verticale colorée */}
-          <View className="absolute left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-fuchsia-300 via-pink-300 to-rose-300 rounded-full"></View>
+          {/* Ligne verticale */}
+          <View className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200"></View>
           
           {weddingEvent.activities.map((activity, index) => (
-            <View key={activity.id} className="mb-6 relative">
-              {/* Timeline dot animé */}
+            <View key={activity.id} className="mb-4 relative">
+              {/* Timeline dot */}
               <View 
-                className={`absolute left-4 w-10 h-10 rounded-full shadow-md z-10 
-                ${isCurrentActivity(activity, currentTime) 
-                  ? 'border-2 animate-pulse' 
-                  : 'border border-white/80'} 
-                bg-gradient-to-br from-white to-rose-50 flex items-center justify-center`}
+                className={`absolute left-4 size-12 rounded-full shadow z-10 
+                ${isCurrentActivity(activity, currentTime) ? 'border-2 ring-4 ring-opacity-50' : ''} 
+                bg-white flex items-center justify-center`}
                 style={{ 
                   borderColor: activity.color,
-                  transform: [{ translateX: -20 }],
-                  shadowColor: activity.color,
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 5,
-                  elevation: 4
+                  transform: [{ translateX: -16 }],
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 1.5,
+                  elevation: 2
                 }}
               >
-                {activity.id === "act-001" && <Ionicons name="document-text" size={18} color={activity.color} />}
-                {activity.id === "act-002" && <Ionicons name="heart" size={18} color={activity.color} />}
-                {activity.id === "act-003" && <Ionicons name="wine" size={18} color={activity.color} />}
-                {activity.id === "act-004" && <Ionicons name="restaurant" size={18} color={activity.color} />}
-                {activity.id === "act-005" && <Ionicons name="musical-notes" size={18} color={activity.color} />}
-                {activity.id === "act-006" && <Ionicons name="cafe" size={18} color={activity.color} />}
+                <Ionicons name={activity.icon} size={22} color={activity.color} />
               </View>
               
               {/* Activity card */}
-              <Animated.View
-                style={{
-                  marginLeft: 40,
-                  transform: [
-                    { 
-                      scale: expandedActivityId === activity.id 
-                        ? animation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [1, 1.02]
-                          }) 
-                        : 1 
-                    }
-                  ],
+              <TouchableOpacity 
+                activeOpacity={0.7}
+                onPress={() => toggleActivity(activity.id)}
+                className={`ml-16 rounded-xl overflow-hidden shadow-sm 
+                ${isCurrentActivity(activity, currentTime) ? 'border-l-4' : 'border-l-0'}`}
+                style={{ 
+                  borderLeftColor: activity.color,
+                  backgroundColor: 'white',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 1.5,
+                  elevation: expandedActivityId === activity.id ? 3 : 1
                 }}
               >
-                <TouchableOpacity 
-                  activeOpacity={0.6}
-                  onPress={() => toggleActivity(activity.id)}
-                  className={`rounded-xl overflow-hidden shadow-sm
-                  ${isCurrentActivity(activity, currentTime) ? 'border-l-4' : 'border-l-0'}`}
-                  style={{ 
-                    borderLeftColor: activity.color,
-                    backgroundColor: 'white',
-                    shadowColor: activity.color,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.5,
-                    elevation: expandedActivityId === activity.id ? 5 : 2
-                  }}
-                >
-                  {/* Activity header */}
-                  <View className={`p-5 ${
-                    expandedActivityId === activity.id 
-                      ? 'bg-gradient-to-r from-white to-rose-50' 
-                      : 'bg-white'
-                  }`}>
-                    <View className="flex-row justify-between items-center">
-                      <View>
-                        <Text className="font-bold text-slate-800 text-lg">{activity.title}</Text>
-                        <View className="flex-row items-center mt-1">
-                          <Ionicons name="time-outline" size={14} color={activity.color} style={{ marginRight: 4 }} />
-                          <Text className="text-slate-500 text-sm">
-                            {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
-                          </Text>
-                        </View>
+                {/* Activity header */}
+                <View className="p-4">
+                  <View className="flex-row justify-between items-center">
+                    <View>
+                      <Text className="font-bold text-slate-800">{activity.title}</Text>
+                      <View className="flex-row items-center mt-1">
+                        <Ionicons name="time-outline" size={12} color="#64748b" style={{ marginRight: 4 }} />
+                        <Text className="text-slate-500 text-sm">
+                          {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
+                        </Text>
                       </View>
-                      <Animated.View
-                        style={{
-                          transform: [{
-                            rotate: expandedActivityId === activity.id
-                              ? animation.interpolate({
-                                  inputRange: [0, 1],
-                                  outputRange: ['0deg', '180deg']
-                                })
-                              : '0deg'
-                          }]
-                        }}
-                      >
-                        <Ionicons 
-                          name="chevron-down"
-                          size={22} 
-                          color={activity.color} 
-                        />
-                      </Animated.View>
                     </View>
+                    <Ionicons 
+                      name={expandedActivityId === activity.id ? "chevron-up" : "chevron-down"} 
+                      size={18} 
+                      color="#94a3b8" 
+                    />
                   </View>
-                  
-                  {/* Activity details avec animation */}
-                  {expandedActivityId === activity.id && (
-                    <Animated.View
-                      style={{
-                        opacity: animation,
-                        transform: [
-                          {
-                            translateY: animation.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [-20, 0]
-                            })
-                          }
-                        ]
-                      }}
-                    >
-                      <View className="px-5 pb-5 bg-white">
-                        <View className="flex-row items-start mb-3 mt-2">
-                          <Ionicons name="location" size={16} color={activity.color} style={{ marginRight: 8, marginTop: 2 }} />
-                          <View>
-                            <Text className="text-slate-700 font-medium">{activity.location}</Text>
-                          </View>
-                        </View>
-                        
-                        <Text className="text-slate-600 mb-4">{activity.description}</Text>
-                        
-                        {activity.additionalInfo && (
-                          <View className="bg-gradient-to-br from-rose-50 to-pink-50 p-4 rounded-xl mt-2 border border-pink-100">
-                            <Text className="text-slate-700 text-sm">{activity.additionalInfo}</Text>
-                          </View>
-                        )}
-                        
-                        {activity.id === 'act-004' && activity.menu && (
-                          <View className="mt-4">
-                            <Text className="font-medium text-slate-700 mb-3 text-center">Menu</Text>
-                            <View className="space-y-3 bg-gradient-to-br from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-100">
-                              <View className="flex-row items-baseline">
-                                <Text className="text-sm font-medium text-amber-800 w-16">Entrée</Text>
-                                <Text className="text-sm text-amber-900">{activity.menu.starter}</Text>
-                              </View>
-                              <View className="flex-row items-baseline">
-                                <Text className="text-sm font-medium text-amber-800 w-16">Plat</Text>
-                                <Text className="text-sm text-amber-900">{activity.menu.main}</Text>
-                              </View>
-                              <View className="flex-row items-baseline">
-                                <Text className="text-sm font-medium text-amber-800 w-16">Dessert</Text>
-                                <Text className="text-sm text-amber-900">{activity.menu.dessert}</Text>
-                              </View>
-                            </View>
-                          </View>
-                        )}
-                      </View>
-                    </Animated.View>
-                  )}
-                  
-                  {isCurrentActivity(activity, currentTime) && (
-                    <View className="px-4 py-3 bg-gradient-to-r from-fuchsia-100 via-pink-100 to-rose-100 border-t border-pink-200">
-                      <View className="flex-row items-center justify-center">
-                        <Ionicons name="heart" size={14} color="#be185d" className="animate-pulse" style={{ marginRight: 6 }} />
-                        <Text className="text-pink-700 text-sm font-medium">En cours</Text>
+                </View>
+                
+                {/* Activity details */}
+                {expandedActivityId === activity.id && (
+                  <View className="px-4 pb-4 bg-white">
+                    <View className="flex-row items-start mb-3">
+                      <Ionicons name="location" size={16} color="#64748b" style={{ marginRight: 8, marginTop: 2 }} />
+                      <View>
+                        <Text className="text-slate-700 font-medium">{activity.location}</Text>
                       </View>
                     </View>
-                  )}
-                </TouchableOpacity>
-              </Animated.View>
+                    
+                    <Text className="text-slate-600 mb-3">{activity.description}</Text>
+                    
+                    {activity.additionalInfo && (
+                      <View className="bg-slate-50 p-3 rounded-lg mt-2">
+                        <Text className="text-slate-600 text-sm">{activity.additionalInfo}</Text>
+                      </View>
+                    )}
+                    
+                    {activity.id === 'act-004' && activity.menu && (
+                      <View className="mt-3">
+                        <Text className="font-medium text-slate-700 mb-2">Menu</Text>
+                        <View className="space-y-2">
+                          <View className="flex-row items-baseline">
+                            <Text className="text-sm font-medium text-slate-500 w-16">Entrée</Text>
+                            <Text className="text-sm text-slate-700">{activity.menu.starter}</Text>
+                          </View>
+                          <View className="flex-row items-baseline">
+                            <Text className="text-sm font-medium text-slate-500 w-16">Plat</Text>
+                            <Text className="text-sm text-slate-700">{activity.menu.main}</Text>
+                          </View>
+                          <View className="flex-row items-baseline">
+                            <Text className="text-sm font-medium text-slate-500 w-16">Dessert</Text>
+                            <Text className="text-sm text-slate-700">{activity.menu.dessert}</Text>
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                )}
+                
+                {isCurrentActivity(activity, currentTime) && (
+                  <View className="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-slate-100">
+                    <Text className="text-purple-600 text-sm font-medium">En cours</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
             </View>
           ))}
         </View>
-        
-        {/* Espace en bas pour un meilleur scroll */}
-        <View className="h-20"></View>
       </ScrollView>
     </View>
   );
