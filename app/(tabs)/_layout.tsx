@@ -13,7 +13,6 @@ const _layout = () => {
           width: '100%',
           height: '100%',
           justifyContent: 'center',
-          alignItems: 'center',
         },
         tabBarStyle: {
           backgroundColor: '#fef3c7',
