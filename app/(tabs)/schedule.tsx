@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, LayoutAnimation, Platform, ScrollView, Text, TouchableOpacity, UIManager, View } from 'react-native';
 
 interface WeddingActivity {
   id: string;
@@ -119,17 +119,147 @@ const isCurrentActivity = (activity: WeddingActivity, currentTime: Date): boolea
   return currentTime >= activity.startTime && currentTime <= activity.endTime;
 };
 
+// Activer les animations de layout pour Android
+// Activer les animations de layout pour Android
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
+
+// Configuration personnalisée des animations pour les expansions
+const CustomLayoutAnimation = {
+  duration: 300,
+  create: {
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.scaleXY,
+    springDamping: 0.7,
+  },
+  update: {
+    type: LayoutAnimation.Types.spring,
+    springDamping: 0.7,
+  },
+  delete: {
+    type: LayoutAnimation.Types.spring,
+    property: LayoutAnimation.Properties.scaleXY,
+    springDamping: 0.7,
+  },
+};
+
 const ScheduleScreen = () => {
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
   const [expandedActivityId, setExpandedActivityId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-
-  // Toggle activity expansion
+  
+  // Animation values for each section
+  const locationOpacity = useRef(new Animated.Value(0)).current;
+  const descriptionOpacity = useRef(new Animated.Value(0)).current;
+  const additionalInfoOpacity = useRef(new Animated.Value(0)).current;
+  const menuOpacity = useRef(new Animated.Value(0)).current;
+  
+  // Animation values for slide-in
+  const contentSlideY = useRef(new Animated.Value(20)).current;
+  
+  // Animation séquentielle pour l'ouverture du modal
+  const startOpenAnimation = () => {
+    // Reset animation values
+    locationOpacity.setValue(0);
+    descriptionOpacity.setValue(0);
+    additionalInfoOpacity.setValue(0);
+    menuOpacity.setValue(0);
+    contentSlideY.setValue(20);
+    
+    // Séquence d'animation
+    Animated.parallel([
+      // Slide-in animation for all content
+      Animated.timing(contentSlideY, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic)
+      }),
+      
+      // Fade-in animations with sequence
+      Animated.stagger(100, [
+        Animated.timing(locationOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.ease
+        }),
+        Animated.timing(descriptionOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.ease
+        }),
+        Animated.timing(additionalInfoOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.ease
+        }),
+        Animated.timing(menuOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+          easing: Easing.ease
+        })
+      ])
+    ]).start();
+  };
+  
+  // Animation pour fermeture du modal
+  const startCloseAnimation = (callback: () => void) => {
+    Animated.parallel([
+      Animated.timing(contentSlideY, {
+        toValue: 10,
+        duration: 200,
+        useNativeDriver: true,
+        easing: Easing.in(Easing.cubic)
+      }),
+      Animated.timing(locationOpacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(descriptionOpacity, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(additionalInfoOpacity, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true
+      }),
+      Animated.timing(menuOpacity, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true
+      })
+    ]).start(callback);
+  };
+  
+  // Toggle activity expansion with animation
   const toggleActivity = (activityId: string): void => {
+    // Configure layout animation for smooth transitions
+    LayoutAnimation.configureNext(CustomLayoutAnimation);
+    
+    // Update expanded state with animations
     if (expandedActivityId === activityId) {
-      setExpandedActivityId(null);
+      // Fermeture du modal - marquer l'activité comme "en fermeture"
+      setExpandedActivityId(`closing-${activityId}`);
+      // Démarrer l'animation de fermeture
+      startCloseAnimation(() => {
+        // Une fois l'animation terminée, fermer complètement
+        setExpandedActivityId(null);
+      });
     } else {
+      // Ouverture du modal
       setExpandedActivityId(activityId);
+      // Démarrer l'animation d'ouverture
+      startOpenAnimation();
     }
   };
 
@@ -194,7 +324,7 @@ const ScheduleScreen = () => {
                   elevation: 2
                 }}
               >
-                <Ionicons name={activity.icon} size={22} color={activity.color} />
+                <Ionicons name={activity.icon as any} size={22} color={activity.color} />
               </View>
               
               {/* Activity card */}
@@ -207,10 +337,12 @@ const ScheduleScreen = () => {
                   borderLeftColor: activity.color,
                   backgroundColor: 'white',
                   shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1.5,
-                  elevation: expandedActivityId === activity.id ? 3 : 1
+                  shadowOffset: { width: 0, height: expandedActivityId === activity.id ? 2 : 1 },
+                  shadowOpacity: expandedActivityId === activity.id ? 0.25 : 0.2,
+                  shadowRadius: expandedActivityId === activity.id ? 3 : 1.5,
+                  elevation: expandedActivityId === activity.id ? 3 : 1,
+                  // Animation will make the card pop slightly when expanded
+                  transform: expandedActivityId === activity.id ? [{ scale: 1.01 }, { translateY: -2 }] : [{ scale: 1 }, { translateY: 0 }]
                 }}
               >
                 {/* Activity header */}
@@ -225,34 +357,65 @@ const ScheduleScreen = () => {
                         </Text>
                       </View>
                     </View>
-                    <Ionicons 
-                      name={expandedActivityId === activity.id ? "chevron-up" : "chevron-down"} 
-                      size={18} 
-                      color="#94a3b8" 
-                    />
+                    <Animated.View
+                      style={{
+                        transform: [{ 
+                          rotate: expandedActivityId === activity.id ? '180deg' : '0deg' 
+                        }]
+                      }}
+                    >
+                      <Ionicons 
+                        name="chevron-down"
+                        size={18} 
+                        color={expandedActivityId === activity.id ? activity.color : "#94a3b8"} 
+                      />
+                    </Animated.View>
                   </View>
                 </View>
                 
                 {/* Activity details */}
-                {expandedActivityId === activity.id && (
-                  <View className="px-4 pb-4 bg-white">
-                    <View className="flex-row items-start mb-3">
+                {(expandedActivityId === activity.id || expandedActivityId === `closing-${activity.id}`) && (
+                  <Animated.View 
+                    className="px-4 pb-4 bg-white overflow-hidden"
+                    style={{
+                      transform: [{ translateY: contentSlideY }]
+                    }}
+                  >
+                    {/* Location with fade-in */}
+                    <Animated.View 
+                      className="flex-row items-start mb-3"
+                      style={{ opacity: locationOpacity }}
+                    >
                       <Ionicons name="location" size={16} color="#64748b" style={{ marginRight: 8, marginTop: 2 }} />
                       <View>
                         <Text className="text-slate-700 font-medium">{activity.location}</Text>
                       </View>
-                    </View>
+                    </Animated.View>
                     
-                    <Text className="text-slate-600 mb-3">{activity.description}</Text>
+                    {/* Description with fade-in */}
+                    <Animated.Text 
+                      className="text-slate-600 mb-3"
+                      style={{ opacity: descriptionOpacity }}
+                    >
+                      {activity.description}
+                    </Animated.Text>
                     
+                    {/* Additional info with fade-in */}
                     {activity.additionalInfo && (
-                      <View className="bg-slate-50 p-3 rounded-lg mt-2">
+                      <Animated.View 
+                        className="bg-slate-50 p-3 rounded-lg mt-2"
+                        style={{ opacity: additionalInfoOpacity }}
+                      >
                         <Text className="text-slate-600 text-sm">{activity.additionalInfo}</Text>
-                      </View>
+                      </Animated.View>
                     )}
                     
+                    {/* Menu with fade-in */}
                     {activity.id === 'act-004' && activity.menu && (
-                      <View className="mt-3">
+                      <Animated.View 
+                        className="mt-3"
+                        style={{ opacity: menuOpacity }}
+                      >
                         <Text className="font-medium text-slate-700 mb-2">Menu</Text>
                         <View className="space-y-2">
                           <View className="flex-row items-baseline">
@@ -268,9 +431,9 @@ const ScheduleScreen = () => {
                             <Text className="text-sm text-slate-700">{activity.menu.dessert}</Text>
                           </View>
                         </View>
-                      </View>
+                      </Animated.View>
                     )}
-                  </View>
+                  </Animated.View>
                 )}
                 
                 {isCurrentActivity(activity, currentTime) && (
