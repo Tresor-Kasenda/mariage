@@ -1,68 +1,18 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, Easing, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 const SplashScreen = () => {
   const router = useRouter();
-  const logoAnim = useRef(new Animated.Value(0)).current;
-  const textAnim = useRef(new Animated.Value(0)).current;
-  const buttonAnimation = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.sequence([
-      Animated.timing(logoAnim, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.bounce, // Effet de rebond léger
-        useNativeDriver: true,
-      }),
-      Animated.timing(textAnim, {
-        toValue: 1,
-        duration: 800,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Animation pulsatoire pour le bouton (exemple)
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(buttonAnimation, {
-          toValue: 1.05,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(buttonAnimation, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-  }, [logoAnim, textAnim, buttonAnimation]);
 
   const handleNavigate = () => {
-    Animated.timing(buttonAnimation, {
-      toValue: 0.95, // Scale down
-      duration: 100,
-      useNativeDriver: true,
-    }).start(() => {
-      Animated.timing(buttonAnimation, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
-        // Navigate to the InvitationScreen page after the animation
-        router.replace('/InvitationScreen');
-    });
+    router.replace('/InvitationScreen');
   };
 
   const handleSkip = () => {
-    // Navigate to the InvitationScreen page
     router.replace('/InvitationScreen');
   };
 
@@ -80,24 +30,19 @@ const SplashScreen = () => {
       </TouchableOpacity>
 
       <View className='flex-1 justify-center items-center w-full space-y-10'>
-        <Animated.View>
-          <Image
-            source={require('../assets/images/icon.png')}
-            style={styles.logo}
-          />
-        </Animated.View>
-        <Animated.View className='items-center'>
-          <Text className='text-5xl text-white font-bold text-center'>Nuptia</Text>
-        </Animated.View>
+        <Image
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+        />
       </View>
 
-      <Animated.View className="px-8 pb-10 items-center justify-center w-full">
+      <View className="px-8 pb-10 items-center justify-center w-full">
         <TouchableOpacity onPress={handleNavigate}>
           <View className='bg-secondary px-12 py-6 rounded-full flex-row w-full items-center justify-between'>
             <Text style={styles.buttonText}>EXPLORER</Text>
           </View>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
     </LinearGradient>
   );
 };
@@ -114,8 +59,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 300,
+    height: 300,
     marginBottom: 20,
     resizeMode: 'contain',
   },
@@ -125,6 +70,12 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     marginTop: 8,
+  },
+  illustration: { // Style for the new illustration
+    width: width * 0.8, // 80% of screen width
+    height: 200,        // Adjust as needed
+    resizeMode: 'contain',
+    marginTop: 10, // Added to ensure spacing, adjust with space-y-10 if needed
   },
   buttonContainer: {
     marginBottom: 50,
