@@ -6,10 +6,15 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Easing, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+interface InvitationState {
+  invitationCode: string;
+  isLoading: boolean;
+}
+
 const InvitationScreen = () => {
   const router = useRouter();
-  const [invitationCode, setInvitationCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [invitationCode, setInvitationCode] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Animation des éléments - style Apple
   const cardOpacity = useRef(new Animated.Value(0)).current;

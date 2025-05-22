@@ -6,8 +6,10 @@ import React, { useState } from 'react';
 import { Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { GuestData, WeddingInfo } from '../types';
+
 // Données temporaires pour la démonstration
-const guestData = {
+const guestData: GuestData = {
   name: 'John Doe',
   email: 'john.doe@example.com',
   phone: '+33 6 12 34 56 78',
@@ -17,7 +19,7 @@ const guestData = {
   confirmationStatus: 'Confirmé',
 };
 
-const weddingInfo = {
+const weddingInfo: WeddingInfo = {
   coupleName: 'Sophie & Thomas',
   date: '15 Juin 2025',
   venue: {

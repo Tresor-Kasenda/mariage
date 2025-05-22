@@ -2,29 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, LayoutAnimation, Platform, ScrollView, StatusBar, Text, TouchableOpacity, UIManager, View } from 'react-native';
-
-interface WeddingActivity {
-  id: string;
-  title: string;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-  description: string;
-  icon: string;
-  color: string;
-  additionalInfo?: string;
-  menu?: {
-    starter: string;
-    main: string;
-    dessert: string;
-  };
-}
-
-interface WeddingEvent {
-  eventName: string;
-  eventDate: Date;
-  activities: WeddingActivity[];
-}
+import { WeddingActivity, WeddingEvent } from '../types';
 
 // Sample data - in a real app, this would come from an API
 const weddingEvent: WeddingEvent = {

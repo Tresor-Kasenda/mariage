@@ -77,6 +77,11 @@ const SharedFooterElements = () => (
   </>
 );
 
+interface ScanResult {
+  type: string;
+  data: string;
+}
+
 const ScanQRScreen = () => {
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -114,7 +119,12 @@ const ScanQRScreen = () => {
         useNativeDriver: true,
         easing: Easing.bezier(0.33, 1, 0.68, 1)
       }),
-    ]).start();
+    ]).start(() => {
+      // Redirection vers l'index après l'animation de succès
+      setTimeout(() => {
+        router.replace('/(tabs)');
+      }, 1500);
+    });
   };
 
   const openSettings = () => {

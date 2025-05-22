@@ -11,11 +11,11 @@ const SplashScreen = () => {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.replace('/InvitationScreen');
+    router.replace('/ScanQRScreen');
   };
 
   const handleSkip = () => {
-    router.replace('/InvitationScreen');
+    router.replace('/ScanQRScreen');
   };
 
   return (
