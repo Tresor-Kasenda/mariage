@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, LayoutAnimation, Platform, ScrollView, Text, TouchableOpacity, UIManager, View } from 'react-native';
+import { Animated, Easing, LayoutAnimation, Platform, ScrollView, StatusBar, Text, TouchableOpacity, UIManager, View } from 'react-native';
 
 interface WeddingActivity {
   id: string;
@@ -38,7 +39,7 @@ const weddingEvent: WeddingEvent = {
       location: "Mairie de Bordeaux",
       description: "Cérémonie officielle à la mairie",
       icon: "document-text",
-      color: "#9333ea",
+      color: "#92400e", // Ambre foncé
       additionalInfo: "Tenue formelle recommandée"
     },
     {
@@ -49,7 +50,7 @@ const weddingEvent: WeddingEvent = {
       location: "Église Saint-André",
       description: "Cérémonie religieuse suivie de la sortie des mariés",
       icon: "heart",
-      color: "#9333ea",
+      color: "#92400e", // Ambre foncé
       additionalInfo: "Veuillez arriver 15 minutes avant le début"
     },
     {
@@ -60,7 +61,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Jardins",
       description: "Cocktail dans les jardins du château avec séance photo",
       icon: "wine",
-      color: "#f472b6",
+      color: "#b45309", // Ambre moyen-foncé
       additionalInfo: "Boissons et amuse-bouches servis"
     },
     {
@@ -71,7 +72,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Grand Salon",
       description: "Dîner gastronomique avec discours et animations",
       icon: "restaurant",
-      color: "#fbbf24",
+      color: "#d97706", // Ambre moyen
       additionalInfo: "Menu gastronomique 3 services",
       menu: {
         starter: "Foie gras mi-cuit et chutney de figues",
@@ -87,7 +88,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Salle de Bal",
       description: "Ouverture du bal par les mariés suivie de la fête",
       icon: "musical-notes",
-      color: "#ec4899",
+      color: "#9a3412", // Ambre très foncé
       additionalInfo: "Open bar et snacks de minuit disponibles"
     },
     {
@@ -98,7 +99,7 @@ const weddingEvent: WeddingEvent = {
       location: "Château Pape Clément - Terrasse",
       description: "Brunch décontracté pour les invités qui restent",
       icon: "cafe",
-      color: "#60a5fa",
+      color: "#f59e0b", // Ambre clair
       additionalInfo: "Tenue décontractée bienvenue"
     }
   ]
@@ -120,29 +121,28 @@ const isCurrentActivity = (activity: WeddingActivity, currentTime: Date): boolea
 };
 
 // Activer les animations de layout pour Android
-// Activer les animations de layout pour Android
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
 
-// Configuration personnalisée des animations pour les expansions
+// Configuration personnalisée des animations pour les expansions - style Apple
 const CustomLayoutAnimation = {
-  duration: 300,
+  duration: 350,
   create: {
     type: LayoutAnimation.Types.spring,
     property: LayoutAnimation.Properties.scaleXY,
-    springDamping: 0.7,
+    springDamping: 0.85,
   },
   update: {
     type: LayoutAnimation.Types.spring,
-    springDamping: 0.7,
+    springDamping: 0.85,
   },
   delete: {
     type: LayoutAnimation.Types.spring,
     property: LayoutAnimation.Properties.scaleXY,
-    springDamping: 0.7,
+    springDamping: 0.85,
   },
 };
 
@@ -160,7 +160,7 @@ const ScheduleScreen = () => {
   // Animation values for slide-in
   const contentSlideY = useRef(new Animated.Value(20)).current;
   
-  // Animation séquentielle pour l'ouverture du modal
+  // Animation séquentielle pour l'ouverture du modal - style Apple fluide
   const startOpenAnimation = () => {
     // Reset animation values
     locationOpacity.setValue(0);
@@ -171,71 +171,71 @@ const ScheduleScreen = () => {
     
     // Séquence d'animation
     Animated.parallel([
-      // Slide-in animation for all content
+      // Slide-in animation for all content - animation plus fluide style Apple
       Animated.timing(contentSlideY, {
         toValue: 0,
-        duration: 400,
+        duration: 450,
         useNativeDriver: true,
-        easing: Easing.out(Easing.cubic)
+        easing: Easing.out(Easing.bezier(0.2, 0.8, 0.2, 1.0))
       }),
       
-      // Fade-in animations with sequence
-      Animated.stagger(100, [
+      // Fade-in animations with sequence - style de séquence Apple
+      Animated.stagger(80, [
         Animated.timing(locationOpacity, {
           toValue: 1,
-          duration: 300,
+          duration: 350,
           useNativeDriver: true,
-          easing: Easing.ease
+          easing: Easing.bezier(0.33, 1, 0.68, 1)
         }),
         Animated.timing(descriptionOpacity, {
           toValue: 1,
-          duration: 300,
+          duration: 350,
           useNativeDriver: true,
-          easing: Easing.ease
+          easing: Easing.bezier(0.33, 1, 0.68, 1)
         }),
         Animated.timing(additionalInfoOpacity, {
           toValue: 1,
-          duration: 300,
+          duration: 350,
           useNativeDriver: true,
-          easing: Easing.ease
+          easing: Easing.bezier(0.33, 1, 0.68, 1)
         }),
         Animated.timing(menuOpacity, {
           toValue: 1,
-          duration: 300,
+          duration: 350,
           useNativeDriver: true,
-          easing: Easing.ease
+          easing: Easing.bezier(0.33, 1, 0.68, 1)
         })
       ])
     ]).start();
   };
   
-  // Animation pour fermeture du modal
+  // Animation pour fermeture du modal - style Apple
   const startCloseAnimation = (callback: () => void) => {
     Animated.parallel([
       Animated.timing(contentSlideY, {
         toValue: 10,
-        duration: 200,
+        duration: 250,
         useNativeDriver: true,
-        easing: Easing.in(Easing.cubic)
+        easing: Easing.in(Easing.bezier(0.2, 0.8, 0.2, 1.0))
       }),
       Animated.timing(locationOpacity, {
         toValue: 0,
-        duration: 150,
+        duration: 200,
         useNativeDriver: true
       }),
       Animated.timing(descriptionOpacity, {
         toValue: 0,
-        duration: 150,
+        duration: 200,
         useNativeDriver: true
       }),
       Animated.timing(additionalInfoOpacity, {
         toValue: 0,
-        duration: 100,
+        duration: 150,
         useNativeDriver: true
       }),
       Animated.timing(menuOpacity, {
         toValue: 0,
-        duration: 100,
+        duration: 150,
         useNativeDriver: true
       })
     ]).start(callback);
@@ -289,70 +289,86 @@ const ScheduleScreen = () => {
   }, []);
 
   return (
-    <View className="flex-1 bg-[#fef3c7]">
-      {/* En-tête */}
-      <View className="bg-[#fef3c7] py-6 px-4 rounded-b-xl">
-        <View className="bg-primary/20 rounded-xl p-4 mb-2 mt-14">
-          <Text className="text-primary text-lg font-bold">{weddingEvent.eventName}</Text>
+    <View className="flex-1 bg-neutral">
+      <StatusBar barStyle="dark-content" />
+      
+      {/* En-tête avec effet de flou style Apple */}
+      <View className="bg-neutral pt-4 px-5 pb-2 relative z-10">
+        <BlurView intensity={20} tint="light" className="absolute inset-0" />
+        <View className="mt-12 mb-2">
+          <Text className="text-3xl font-semibold text-primary tracking-tight">Programme</Text>
           <View className="flex-row items-center mt-1">
-            <Ionicons name="calendar" size={14} color="white" style={{ opacity: 0.8, marginRight: 4 }} />
-            <Text className="text-primary opacity-90 text-sm">{formatDate(weddingEvent.eventDate)}</Text>
+            <Ionicons name="calendar-outline" size={16} color="#92400e" style={{ marginRight: 6 }} />
+            <Text className="text-primary/80 text-base font-medium">
+              {formatDate(weddingEvent.eventDate)}
+            </Text>
           </View>
         </View>
       </View>
       
       {/* Timeline */}
-      <ScrollView className="flex-1 px-4 py-6">
+      <ScrollView 
+        className="flex-1 px-5 pt-4"
+        contentContainerStyle={{ paddingBottom: 30 }}
+        showsVerticalScrollIndicator={false}
+      >
         <View className="relative">
           {/* Ligne verticale */}
-          <View className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200"></View>
+          <View 
+            className="absolute left-6 top-0 bottom-0 w-[1.5px]"
+            style={{ backgroundColor: 'rgba(146, 64, 14, 0.2)' }}
+          />
           
           {weddingEvent.activities.map((activity, index) => (
-            <View key={activity.id} className="mb-4 relative">
+            <View key={activity.id} className="mb-6 relative">
               {/* Timeline dot */}
               <View 
-                className={`absolute left-4 size-12 rounded-full shadow z-10 
-                ${isCurrentActivity(activity, currentTime) ? 'border-2 ring-4 ring-opacity-50' : ''} 
-                bg-white flex items-center justify-center`}
+                className={`absolute left-6 size-12 rounded-full shadow-sm z-10 
+                ${isCurrentActivity(activity, currentTime) ? 'border-2 ring-4 ring-amber-800 ring-opacity-30' : ''}`}
                 style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   borderColor: activity.color,
-                  transform: [{ translateX: -16 }],
+                  transform: [{ translateX: -24 }],
                   shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1.5,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 3,
                   elevation: 2
                 }}
               >
-                <Ionicons name={activity.icon as any} size={22} color={activity.color} />
+                <View className="flex-1 items-center justify-center">
+                  <Ionicons name={activity.icon as any} size={24} color={activity.color} />
+                </View>
               </View>
               
-              {/* Activity card */}
+              {/* Activity card - Style Apple avec blur effect */}
               <TouchableOpacity 
-                activeOpacity={0.7}
+                activeOpacity={0.9}
                 onPress={() => toggleActivity(activity.id)}
-                className={`ml-16 rounded-xl overflow-hidden shadow-sm 
-                ${isCurrentActivity(activity, currentTime) ? 'border-l-4' : 'border-l-0'}`}
+                className={`ml-16 rounded-2xl overflow-hidden
+                ${isCurrentActivity(activity, currentTime) ? 'border-l-4' : ''}`}
                 style={{ 
                   borderLeftColor: activity.color,
-                  backgroundColor: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
                   shadowColor: '#000',
-                  shadowOffset: { width: 0, height: expandedActivityId === activity.id ? 2 : 1 },
-                  shadowOpacity: expandedActivityId === activity.id ? 0.25 : 0.2,
-                  shadowRadius: expandedActivityId === activity.id ? 3 : 1.5,
-                  elevation: expandedActivityId === activity.id ? 3 : 1,
-                  // Animation will make the card pop slightly when expanded
-                  transform: expandedActivityId === activity.id ? [{ scale: 1.01 }, { translateY: -2 }] : [{ scale: 1 }, { translateY: 0 }]
+                  shadowOffset: { width: 0, height: expandedActivityId === activity.id ? 4 : 2 },
+                  shadowOpacity: expandedActivityId === activity.id ? 0.15 : 0.08,
+                  shadowRadius: expandedActivityId === activity.id ? 8 : 4,
+                  elevation: expandedActivityId === activity.id ? 4 : 2,
+                  // Animation will make the card pop slightly when expanded - style Apple
+                  transform: expandedActivityId === activity.id ? [{ scale: 1.02 }, { translateY: -1 }] : [{ scale: 1 }, { translateY: 0 }]
                 }}
               >
+                <BlurView intensity={40} tint="light" className="absolute inset-0" />
+                
                 {/* Activity header */}
                 <View className="p-4">
                   <View className="flex-row justify-between items-center">
                     <View>
-                      <Text className="font-bold text-slate-800">{activity.title}</Text>
+                      <Text className="font-semibold text-lg text-primary">{activity.title}</Text>
                       <View className="flex-row items-center mt-1">
-                        <Ionicons name="time-outline" size={12} color="#64748b" style={{ marginRight: 4 }} />
-                        <Text className="text-slate-500 text-sm">
+                        <Ionicons name="time-outline" size={13} color="#92400e" style={{ marginRight: 5, opacity: 0.7 }} />
+                        <Text className="text-primary/70 text-base">
                           {formatTime(activity.startTime)} - {formatTime(activity.endTime)}
                         </Text>
                       </View>
@@ -366,8 +382,9 @@ const ScheduleScreen = () => {
                     >
                       <Ionicons 
                         name="chevron-down"
-                        size={18} 
-                        color={expandedActivityId === activity.id ? activity.color : "#94a3b8"} 
+                        size={20} 
+                        color={expandedActivityId === activity.id ? activity.color : "#92400e"} 
+                        style={{ opacity: expandedActivityId === activity.id ? 1 : 0.6 }}
                       />
                     </Animated.View>
                   </View>
@@ -376,59 +393,62 @@ const ScheduleScreen = () => {
                 {/* Activity details */}
                 {(expandedActivityId === activity.id || expandedActivityId === `closing-${activity.id}`) && (
                   <Animated.View 
-                    className="px-4 pb-4 bg-white overflow-hidden"
+                    className="px-4 pb-5"
                     style={{
                       transform: [{ translateY: contentSlideY }]
                     }}
                   >
+                    {/* Separator line - style Apple */}
+                    <View className="h-[0.5px] bg-primary/15 mb-3" />
+                    
                     {/* Location with fade-in */}
                     <Animated.View 
                       className="flex-row items-start mb-3"
                       style={{ opacity: locationOpacity }}
                     >
-                      <Ionicons name="location" size={16} color="#64748b" style={{ marginRight: 8, marginTop: 2 }} />
+                      <Ionicons name="location-outline" size={18} color="#92400e" style={{ marginRight: 8, marginTop: 2, opacity: 0.8 }} />
                       <View>
-                        <Text className="text-slate-700 font-medium">{activity.location}</Text>
+                        <Text className="text-primary font-medium text-base">{activity.location}</Text>
                       </View>
                     </Animated.View>
                     
                     {/* Description with fade-in */}
                     <Animated.Text 
-                      className="text-slate-600 mb-3"
+                      className="text-primary/80 text-base mb-4 leading-5"
                       style={{ opacity: descriptionOpacity }}
                     >
                       {activity.description}
                     </Animated.Text>
                     
-                    {/* Additional info with fade-in */}
+                    {/* Additional info with fade-in - style Apple card */}
                     {activity.additionalInfo && (
                       <Animated.View 
-                        className="bg-slate-50 p-3 rounded-lg mt-2"
+                        className="bg-amber-50/50 rounded-xl p-3.5 mb-2"
                         style={{ opacity: additionalInfoOpacity }}
                       >
-                        <Text className="text-slate-600 text-sm">{activity.additionalInfo}</Text>
+                        <Text className="text-primary/90 text-[15px]">{activity.additionalInfo}</Text>
                       </Animated.View>
                     )}
                     
-                    {/* Menu with fade-in */}
+                    {/* Menu with fade-in - style Apple */}
                     {activity.id === 'act-004' && activity.menu && (
                       <Animated.View 
-                        className="mt-3"
+                        className="mt-1 bg-amber-50/50 rounded-xl p-3.5"
                         style={{ opacity: menuOpacity }}
                       >
-                        <Text className="font-medium text-slate-700 mb-2">Menu</Text>
-                        <View className="space-y-2">
+                        <Text className="font-semibold text-primary mb-2.5">Menu</Text>
+                        <View className="space-y-2.5">
                           <View className="flex-row items-baseline">
-                            <Text className="text-sm font-medium text-slate-500 w-16">Entrée</Text>
-                            <Text className="text-sm text-slate-700">{activity.menu.starter}</Text>
+                            <Text className="text-[15px] font-medium text-primary/70 w-20">Entrée</Text>
+                            <Text className="text-[15px] text-primary/90 flex-1">{activity.menu.starter}</Text>
                           </View>
                           <View className="flex-row items-baseline">
-                            <Text className="text-sm font-medium text-slate-500 w-16">Plat</Text>
-                            <Text className="text-sm text-slate-700">{activity.menu.main}</Text>
+                            <Text className="text-[15px] font-medium text-primary/70 w-20">Plat</Text>
+                            <Text className="text-[15px] text-primary/90 flex-1">{activity.menu.main}</Text>
                           </View>
                           <View className="flex-row items-baseline">
-                            <Text className="text-sm font-medium text-slate-500 w-16">Dessert</Text>
-                            <Text className="text-sm text-slate-700">{activity.menu.dessert}</Text>
+                            <Text className="text-[15px] font-medium text-primary/70 w-20">Dessert</Text>
+                            <Text className="text-[15px] text-primary/90 flex-1">{activity.menu.dessert}</Text>
                           </View>
                         </View>
                       </Animated.View>
@@ -437,8 +457,8 @@ const ScheduleScreen = () => {
                 )}
                 
                 {isCurrentActivity(activity, currentTime) && (
-                  <View className="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-slate-100">
-                    <Text className="text-purple-600 text-sm font-medium">En cours</Text>
+                  <View className="px-4 py-2.5 border-t border-primary/10" style={{backgroundColor: 'rgba(245, 158, 11, 0.08)'}}>
+                    <Text className="text-secondary font-medium">En cours</Text>
                   </View>
                 )}
               </TouchableOpacity>

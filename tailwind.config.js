@@ -5,10 +5,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#9333ea',
-        secondary: '#f472b6',
-        accent: '#fbbf24',
-        neutral: '#fef3c7'
+        primary: '#92400e',   // Ambre foncé
+        secondary: '#b45309', // Ambre moyen-foncé
+        accent: '#f59e0b',    // Ambre clair
+        neutral: '#fef3c7'    // Ambre très clair (fond)
       }
     },
   },
