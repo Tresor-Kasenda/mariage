@@ -11,7 +11,7 @@ const SplashScreen = () => {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.replace('/ScanQRScreen');
+    router.replace('/InvitationScreen');
   };
 
   return (
@@ -37,39 +37,28 @@ const SplashScreen = () => {
           <Text 
             style={{
               fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
-              fontSize: 32,
-              fontWeight: '600',
+              fontSize: 36,
+              fontWeight: '700',
               marginTop: 30,
             }} 
             className="text-white text-center"
           >
-            Bienvenue
+            L'Amour Célébré
           </Text>
           
+          {/* Sous-titre élégant */}
           <Text 
             style={{
               fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
-              fontSize: 17,
+              fontSize: 18,
               fontWeight: '400',
-              marginTop: 8,
+              marginTop: 10,
               opacity: 0.9,
+              letterSpacing: 0.5,
             }} 
-            className="text-white text-center px-12"
+            className="text-white text-center px-10"
           >
-            Mariage de Sophie & Thomas
-          </Text>
-          
-          <Text 
-            style={{
-              fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
-              fontSize: 15,
-              fontWeight: '400',
-              marginTop: 6,
-              opacity: 0.8,
-            }} 
-            className="text-amber-100 text-center px-10"
-          >
-            Veuillez scanner votre code QR d'invitation pour accéder aux informations
+            Partageons ensemble ce moment unique
           </Text>
         </View>
 
@@ -90,7 +79,7 @@ const SplashScreen = () => {
                 }} 
                 className="text-white"
               >
-                SCANNER MON INVITATION
+                ACCÉDER À MON INVITATION
               </Text>
             </TouchableOpacity>
           </BlurView>
