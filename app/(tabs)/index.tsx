@@ -6,8 +6,12 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Index() {
+  // Récupérer les informations de l'invité authentifié
+  const { guest } = useAuth();
+  
   // Date du mariage
   const eventDate = new Date(2025, 5, 15); // 15 juin 2025
   const today = new Date();
@@ -87,6 +91,19 @@ export default function Index() {
           
           <BlurView intensity={30} tint="dark" className="absolute inset-x-0 bottom-0 justify-end p-6 h-1/2 bg-black/10">
             <View className="mb-2">
+              {guest && (
+                <Text 
+                  style={{
+                    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
+                    fontSize: 16,
+                    fontWeight: '500',
+                    letterSpacing: 0.5,
+                  }}
+                  className="text-amber-100 mb-1"
+                >
+                  Bonjour {guest.name.split(' ')[0]},
+                </Text>
+              )}
               <Text 
                 style={{
                   fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, LayoutAnimation, Platform, ScrollView, StatusBar, Text, TouchableOpacity, UIManager, View } from 'react-native';
-import { WeddingActivity, WeddingEvent } from '../types';
+import { WeddingActivity, WeddingEvent } from '../../types';
 
 // Sample data - in a real app, this would come from an API
 const weddingEvent: WeddingEvent = {

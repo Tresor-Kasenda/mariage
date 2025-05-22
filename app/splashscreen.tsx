@@ -14,10 +14,6 @@ const SplashScreen = () => {
     router.replace('/ScanQRScreen');
   };
 
-  const handleSkip = () => {
-    router.replace('/ScanQRScreen');
-  };
-
   return (
     <>
       <StatusBar style="light" />
@@ -27,21 +23,6 @@ const SplashScreen = () => {
         className="flex-1 items-center pt-16 pb-6"
       >
         <Stack.Screen options={{ headerShown: false }} />
-        
-        {/* Bouton Passer avec style Apple */}
-        <TouchableOpacity 
-          style={styles.skipButton} 
-          onPress={handleSkip}
-          className="bg-black/10 px-6 py-2.5 rounded-full"
-        >
-          <Text style={{
-            fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
-            fontSize: 16,
-            fontWeight: '500',
-          }} className="text-white">
-            Passer
-          </Text>
-        </TouchableOpacity>
 
         <View className="flex-1 justify-center items-center w-full">
           {/* Logo avec effet d'ombre à la manière Apple */}
@@ -75,7 +56,20 @@ const SplashScreen = () => {
             }} 
             className="text-white text-center px-12"
           >
-            Votre invitation personnelle au mariage de Sophie & Thomas
+            Mariage de Sophie & Thomas
+          </Text>
+          
+          <Text 
+            style={{
+              fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
+              fontSize: 15,
+              fontWeight: '400',
+              marginTop: 6,
+              opacity: 0.8,
+            }} 
+            className="text-amber-100 text-center px-10"
+          >
+            Veuillez scanner votre code QR d'invitation pour accéder aux informations
           </Text>
         </View>
 
@@ -96,7 +90,7 @@ const SplashScreen = () => {
                 }} 
                 className="text-white"
               >
-                EXPLORER
+                SCANNER MON INVITATION
               </Text>
             </TouchableOpacity>
           </BlurView>

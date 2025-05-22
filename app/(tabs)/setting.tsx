@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { GuestData, WeddingInfo } from '../types';
+import { useAuth } from '../../context/AuthContext';
+import { GuestData, WeddingInfo } from '../../types';
 
 // Données temporaires pour la démonstration
 const guestData: GuestData = {
@@ -36,6 +37,32 @@ const weddingInfo: WeddingInfo = {
 
 const Setting = () => {
   const [showMap, setShowMap] = useState(false);
+  const { logout, guest } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Déconnexion",
+      "Êtes-vous sûr de vouloir vous déconnecter ?",
+      [
+        {
+          text: "Annuler",
+          style: "cancel"
+        },
+        {
+          text: "Déconnexion", 
+          style: "destructive",
+          onPress: async () => {
+            await logout();
+            router.replace('/splashscreen');
+          }
+        }
+      ]
+    );
+  };
+
+  // Utiliser les données réelles de l'invité si disponibles
+  const currentGuest = guest || guestData;
 
   return (
     <SafeAreaView className="flex-1 bg-neutral">
@@ -66,16 +93,8 @@ const Setting = () => {
             />
           </View>
           
-          <View className="w-28 h-28 rounded-full overflow-hidden border-4 border-neutral mt-[-56px] mb-2 shadow-lg">
-            <Image 
-              source={{ uri: 'https://images.unsplash.com/photo-1698220175361-dd634ee17ee2?q=80&w=1974&auto=format&fit=crop' }} 
-              className="w-full h-full"
-              style={{ resizeMode: "cover" }}
-            />
-          </View>
-          
           <Text 
-            className="text-3xl font-semibold text-primary text-center"
+            className="text-3xl font-semibold text-primary text-center mt-8"
             style={{ 
               fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif'
             }}
@@ -104,50 +123,16 @@ const Setting = () => {
             >
               Mon Profil
             </Text>
-            <TouchableOpacity>
-              <Ionicons name="pencil-outline" size={20} color="#92400e" />
-            </TouchableOpacity>
           </View>
           
           <BlurView intensity={60} tint="light" className="rounded-2xl overflow-hidden shadow-sm">
             <View className="p-5">
-              <View className="flex-row items-center mb-6">
-                <View className="size-16 bg-secondary/10 rounded-full items-center justify-center border border-secondary/20">
-                  <Text 
-                    className="text-2xl font-semibold text-primary"
-                    style={{ 
-                      fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif'
-                    }}
-                  >
-                    {guestData.name.charAt(0)}
-                  </Text>
-                </View>
-                <View className="ml-4">
-                  <Text 
-                    className="text-lg font-medium text-primary"
-                    style={{ 
-                      fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif'
-                    }}
-                  >
-                    {guestData.name}
-                  </Text>
-                  <Text 
-                    className="text-base text-primary/70"
-                    style={{ 
-                      fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif'
-                    }}
-                  >
-                    {guestData.email}
-                  </Text>
-                </View>
-              </View>
-
               <View>
-                <InfoRow icon="call-outline" label="Téléphone" value={guestData.phone} />
-                <InfoRow icon="people-outline" label="Invités" value={guestData.numberOfGuests.toString()} />
-                <InfoRow icon="grid-outline" label="Table" value={`N° ${guestData.tableNumber}`} />
-                <InfoRow icon="nutrition-outline" label="Régime" value={guestData.dietaryRestrictions} />
-                <InfoRow icon="checkmark-circle-outline" label="Statut" value={guestData.confirmationStatus} />
+                <InfoRow icon="call-outline" label="Téléphone" value={currentGuest.phone} />
+                <InfoRow icon="people-outline" label="Invités" value={currentGuest.numberOfGuests.toString()} />
+                <InfoRow icon="grid-outline" label="Table" value={`N° ${currentGuest.tableNumber}`} />
+                <InfoRow icon="nutrition-outline" label="Régime" value={currentGuest.dietaryRestrictions} />
+                <InfoRow icon="checkmark-circle-outline" label="Statut" value={currentGuest.confirmationStatus} />
               </View>
             </View>
           </BlurView>
@@ -217,6 +202,25 @@ const Setting = () => {
               </View>
             </View>
           </BlurView>
+        </View>
+        
+        {/* Bouton de déconnexion - Style Apple */}
+        <View className="mx-5 mb-20 mt-6">
+          <TouchableOpacity
+            onPress={handleLogout}
+            className="bg-primary/10 py-4 rounded-xl items-center"
+          >
+            <Text
+              style={{
+                fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
+                fontSize: 17,
+                fontWeight: '600',
+              }}
+              className="text-red-600"
+            >
+              Déconnexion
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

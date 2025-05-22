@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Linking, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
 // Animation pour le scan - style Apple
 const ScannerAnimatedBorder = () => {
@@ -84,10 +85,12 @@ interface ScanResult {
 
 const ScanQRScreen = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
   const [isTorchOn, setIsTorchOn] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   
   // Animation pour le succès de scan
   const successAnim = useRef(new Animated.Value(0)).current;
@@ -101,9 +104,10 @@ const ScanQRScreen = () => {
     getCameraPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }: { type: string; data: string }) => {
+  const handleBarCodeScanned = async ({ type, data }: { type: string; data: string }) => {
     setScanned(true);
     setScannedData(data);
+    setAuthError(null);
     
     // Animation de succès
     Animated.sequence([
@@ -119,11 +123,23 @@ const ScanQRScreen = () => {
         useNativeDriver: true,
         easing: Easing.bezier(0.33, 1, 0.68, 1)
       }),
-    ]).start(() => {
-      // Redirection vers l'index après l'animation de succès
-      setTimeout(() => {
-        router.replace('/(tabs)');
-      }, 1500);
+    ]).start(async () => {
+      try {
+        // Authentification avec le QR code
+        const success = await login(data);
+        
+        if (success) {
+          // Redirection vers l'index après authentification réussie
+          setTimeout(() => {
+            router.replace('/(tabs)');
+          }, 1500);
+        } else {
+          setAuthError("Code QR invalide. Veuillez réessayer avec un code valide.");
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'authentification:", error);
+        setAuthError("Une erreur est survenue. Veuillez réessayer.");
+      }
     });
   };
 
@@ -190,7 +206,7 @@ const ScanQRScreen = () => {
       <View className="absolute top-0 left-0 right-0 z-20 flex-row justify-between items-center pt-14 px-5">
         <TouchableOpacity 
           className="h-10 w-10 rounded-full bg-black/10 items-center justify-center backdrop-blur-md" 
-          onPress={() => router.back()}
+          onPress={() => router.replace('/splashscreen')}
         >
           <Ionicons name="close" size={22} color="#fef3c7" />
         </TouchableOpacity>
@@ -280,15 +296,31 @@ const ScanQRScreen = () => {
           >
             <View className="bg-white/10 rounded-3xl p-6 w-full max-w-xs backdrop-blur-md mb-6">
               <View className="items-center mb-4">
-                <View className="bg-green-400/90 rounded-full p-3 mb-4">
-                  <Ionicons name="checkmark" size={30} color="white" />
-                </View>
-                <Text className="text-amber-50 text-2xl font-semibold text-center mb-1">
-                  Code scanné !
-                </Text>
-                <Text className="text-amber-200 text-base text-center">
-                  Invitation vérifiée avec succès
-                </Text>
+                {!authError ? (
+                  <>
+                    <View className="bg-green-400/90 rounded-full p-3 mb-4">
+                      <Ionicons name="checkmark" size={30} color="white" />
+                    </View>
+                    <Text className="text-amber-50 text-2xl font-semibold text-center mb-1">
+                      Code scanné !
+                    </Text>
+                    <Text className="text-amber-200 text-base text-center">
+                      Invitation vérifiée avec succès
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <View className="bg-red-400/90 rounded-full p-3 mb-4">
+                      <Ionicons name="close" size={30} color="white" />
+                    </View>
+                    <Text className="text-amber-50 text-2xl font-semibold text-center mb-1">
+                      Code invalide
+                    </Text>
+                    <Text className="text-amber-200 text-base text-center">
+                      {authError}
+                    </Text>
+                  </>
+                )}
               </View>
               
               <View className="bg-white/10 rounded-xl p-4 mb-4">
