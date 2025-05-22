@@ -11,7 +11,7 @@ const SplashScreen = () => {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.replace('/InvitationScreen');
+    router.replace('/GuestRegistrationScreen');
   };
 
   return (

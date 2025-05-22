@@ -80,6 +80,21 @@ const _layout = () => {
         }}
       />
       <Tabs.Screen
+        name="beverages"
+        options={{
+          title: 'Boissons',
+          tabBarIcon: ({color, size, focused}) => (
+            <View>
+              <Ionicons 
+                name={focused ? "wine" : "wine-outline"} 
+                size={size} 
+                color={color} 
+              />
+            </View>
+          )
+        }}
+      />
+      <Tabs.Screen
         name="setting"
         options={{
           title: 'Paramètres',

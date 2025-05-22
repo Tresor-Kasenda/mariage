@@ -65,11 +65,13 @@ export type RootStackParamList = {
   splashscreen: undefined;
   ScanQRScreen: undefined;
   InvitationScreen: undefined;
+  GuestRegistrationScreen: undefined;
   '(tabs)': undefined;
 };
 
 export type TabParamList = {
   index: undefined;
   schedule: undefined;
+  beverages: undefined;
   setting: undefined;
 };
