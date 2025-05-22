@@ -1,10 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Camera, CameraView } from "expo-camera";
-import { useRouter } from 'expo-router'; // Import useRouter
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Button, Linking, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Helper component for shared footer elements
 const SharedFooterElements = () => (
   <>
     <TouchableOpacity className="bg-white py-[15px] px-[30px] rounded-[30px] mb-[40px] flex-row items-center">
@@ -22,11 +21,11 @@ const SharedFooterElements = () => (
 );
 
 const ScanQRScreen = () => {
-  const router = useRouter(); // Get router instance
+  const router = useRouter();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState<string | null>(null);
-  const [isTorchOn, setIsTorchOn] = useState(false); // State for flashlight
+  const [isTorchOn, setIsTorchOn] = useState(false);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -51,7 +50,6 @@ const ScanQRScreen = () => {
     }
   };
 
-  // Function to toggle the flashlight state
   const toggleTorch = () => {
     setIsTorchOn(!isTorchOn);
   };
@@ -63,6 +61,7 @@ const ScanQRScreen = () => {
       </SafeAreaView>
     );
   }
+
   if (hasPermission === false) {
     return (
       <SafeAreaView className="flex-1 bg-[#300301] justify-center items-center p-5">
@@ -75,17 +74,14 @@ const ScanQRScreen = () => {
   return (
     <SafeAreaView className="flex-1 items-center bg-[#300301]">
       <StatusBar barStyle="light-content" />
-      {/* Header Icons */}
       <View className="absolute top-0 left-0 right-0 z-10 flex-row justify-between items-center pt-10 px-1 bg-[#300301]">
         <TouchableOpacity className="p-2.5" onPress={() => router.back()}>
           <Ionicons name="close" size={28} color="white" />
         </TouchableOpacity>
         <View className="flex-row">
-          {/* Flashlight button */}
           <TouchableOpacity className="p-2.5" onPress={toggleTorch}>
             <Ionicons name={isTorchOn ? "flashlight" : "flashlight-outline"} size={24} color="white" />
           </TouchableOpacity>
-          {/* Removed image upload icon as per original design */}
           <TouchableOpacity className="p-2.5">
             <Ionicons name="ellipsis-horizontal" size={24} color="white" />
           </TouchableOpacity>
@@ -95,15 +91,14 @@ const ScanQRScreen = () => {
       {!scanned ? (
         <>
           <CameraView
-            enableTorch={isTorchOn} // Control flashlight via state
+            enableTorch={isTorchOn}
             onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
             barcodeScannerSettings={{
               barcodeTypes: ["qr"],
             }}
-            style={StyleSheet.absoluteFillObject} // Camera takes full screen
+            style={StyleSheet.absoluteFillObject}
             className="flex-1"
           />
-          {/* Scanner Overlay Box - Positioned absolutely on top of CameraView */}
           <View className="absolute inset-0 flex-1 justify-center items-center -mt-20 z-[5]">
             <View className="w-3/5 aspect-square relative">
               <View className="absolute -top-1.5 -left-1.5 w-[60px] h-[60px] border-t-8 border-l-8 border-[#D22730] rounded-tl-2xl" />
@@ -113,7 +108,6 @@ const ScanQRScreen = () => {
             </View>
           </View>
 
-          {/* Overlay Footer for !scanned state - Positioned absolutely at the bottom */}
           <View className="absolute bottom-0 left-0 right-0 pb-[40px] items-center bg-transparent px-5 z-10">
             <Text className="text-white text-lg text-center mb-[30px]">
               Scan a PayNow QR to pay{`\\n`}or Spot code to connect
@@ -122,7 +116,6 @@ const ScanQRScreen = () => {
           </View>
         </>
       ) : (
-        /* Scanned state view */
         <View className="flex-1 items-center justify-center px-5">
           <Text className="text-white text-xl text-center mb-5">QR Code Scanned!</Text>
           <Text className="text-gray-300 text-base text-center mb-10">Data: {scannedData}</Text>
@@ -140,4 +133,3 @@ const ScanQRScreen = () => {
 };
 
 export default ScanQRScreen;
-// StyleSheet import is kept for StyleSheet.absoluteFillObject
