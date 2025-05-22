@@ -130,7 +130,7 @@ const GuestRegistrationScreen = () => {
 
   const renderForm = () => (
     <ScrollView 
-      className="w-full px-6"
+      className="w-full px-4"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 40 }}
     >
