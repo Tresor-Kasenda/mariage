@@ -95,22 +95,37 @@ const _layout = () => {
         }}
       />
       <Tabs.Screen
+        name="location" // This should match the filename location.tsx
+        options={{
+          title: 'Localisation',
+          tabBarIcon: ({ color, size, focused }) => ( // Ensure 'focused' is available if used for icon logic
+            <View>
+              <Ionicons 
+                name={focused ? "map" : "map-outline"} // Using focused state for icon
+                size={size} 
+                color={color} 
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="setting"
         options={{
-          title: 'Paramètres',
+          title: 'Réglages', // Corrected title to "Réglages" from "Paramètres" to match example
           tabBarIcon: ({color, size, focused}) => (
             <View>
               <Ionicons 
-                name={focused ? "settings" : "settings-outline"} 
-                size={size} 
-                color={color} 
+                name={focused ? "settings" : "settings-outline"}
+                size={size}
+                color={color}
               />
             </View>
           )
         }}
       />
     </Tabs>
-  )
-}
+  );
+};
 
-export default _layout
+export default _layout;

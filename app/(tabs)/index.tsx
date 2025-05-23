@@ -282,9 +282,10 @@ export default function Index() {
           </Link>
           
           {/* Localisation */}
-          <TouchableOpacity activeOpacity={0.9}>
-            <Animated.View style={{
-              opacity: locationOpacity,
+          <Link href="/location" asChild>
+            <TouchableOpacity activeOpacity={0.9}>
+              <Animated.View style={{
+                opacity: locationOpacity,
               transform: [{ 
                 translateY: locationOpacity.interpolate({
                   inputRange: [0, 1],
@@ -323,6 +324,7 @@ export default function Index() {
               </BlurView>
             </Animated.View>
           </TouchableOpacity>
+        </Link>
         </View>
       </ScrollView>
     </SafeAreaView>
