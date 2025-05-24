@@ -26,15 +26,30 @@ export interface WeddingInfo {
   contactPerson: ContactPerson;
 }
 
+export interface Guest {
+  name: string;
+  email?: string;
+  phone?: string;
+  dietaryRestrictions?: string[];
+  rsvpStatus: 'confirmed' | 'declined' | 'pending';
+}
+
 export interface GuestData {
+  id: string;
+  invitationType: 'single' | 'couple';
+  primaryGuest: Guest;
+  secondaryGuest?: Guest; // Seulement pour les couples
+  tableNumber: string;
+  numberOfGuests: number;
+  confirmationStatus: 'Confirmé' | 'En attente' | 'Annulé';
+  qrCode?: string;
+  registrationDate?: string;
+  hasCompletedRSVP: boolean;
+  // Champs legacy pour compatibilité
   name: string;
   email: string;
   phone: string;
-  tableNumber: string;
-  numberOfGuests: number;
   dietaryRestrictions: string;
-  confirmationStatus: 'Confirmé' | 'En attente' | 'Annulé';
-  qrCode?: string;
 }
 
 export interface WeddingActivity {
@@ -66,6 +81,8 @@ export type RootStackParamList = {
   ScanQRScreen: undefined;
   InvitationScreen: undefined;
   GuestRegistrationScreen: undefined;
+  RSVPScreen: undefined;
+  OnboardingScreen: undefined;
   '(tabs)': undefined;
 };
 

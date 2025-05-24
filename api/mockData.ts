@@ -3,34 +3,106 @@ import { GuestData, WeddingActivity, WeddingInfo } from '../types';
 // Mock des invités
 export const mockGuests: GuestData[] = [
   {
-    name: 'Jean Dupont',
-    email: 'jean.dupont@email.com',
-    phone: '+33 6 12 34 56 78',
+    id: '1',
+    invitationType: 'couple',
+    primaryGuest: {
+      name: 'Jean Dupont',
+      email: 'jean.dupont@email.com',
+      phone: '+33 6 12 34 56 78',
+      dietaryRestrictions: ['Végétarien'],
+      rsvpStatus: 'confirmed'
+    },
+    secondaryGuest: {
+      name: 'Marie Dupont',
+      email: 'marie.dupont@email.com',
+      phone: '+33 6 12 34 56 79',
+      dietaryRestrictions: ['Sans gluten'],
+      rsvpStatus: 'confirmed'
+    },
     tableNumber: '1',
     numberOfGuests: 2,
-    dietaryRestrictions: 'Végétarien',
     confirmationStatus: 'Confirmé',
     qrCode: 'JEAN2025',
+    hasCompletedRSVP: true,
+    registrationDate: '2025-05-20',
+    // Champs legacy
+    name: 'Jean & Marie Dupont',
+    email: 'jean.dupont@email.com',
+    phone: '+33 6 12 34 56 78',
+    dietaryRestrictions: 'Végétarien, Sans gluten',
   },
   {
-    name: 'Marie Martin',
-    email: 'marie.martin@email.com',
-    phone: '+33 6 23 45 67 89',
+    id: '2',
+    invitationType: 'single',
+    primaryGuest: {
+      name: 'Sophie Martin',
+      email: 'sophie.martin@email.com',
+      phone: '+33 6 23 45 67 89',
+      dietaryRestrictions: ['Vegan'],
+      rsvpStatus: 'confirmed'
+    },
     tableNumber: '2',
-    numberOfGuests: 3,
-    dietaryRestrictions: 'Sans gluten',
+    numberOfGuests: 1,
     confirmationStatus: 'Confirmé',
-    qrCode: 'MARIE2025',
+    qrCode: 'SOPHIE2025',
+    hasCompletedRSVP: true,
+    registrationDate: '2025-05-18',
+    // Champs legacy
+    name: 'Sophie Martin',
+    email: 'sophie.martin@email.com',
+    phone: '+33 6 23 45 67 89',
+    dietaryRestrictions: 'Vegan',
   },
   {
-    name: 'Pierre Dubois',
-    email: 'pierre.dubois@email.com',
-    phone: '+33 6 34 56 78 90',
+    id: '3',
+    invitationType: 'couple',
+    primaryGuest: {
+      name: 'Pierre Dubois',
+      email: 'pierre.dubois@email.com',
+      phone: '+33 6 34 56 78 90',
+      dietaryRestrictions: [],
+      rsvpStatus: 'pending'
+    },
+    secondaryGuest: {
+      name: 'Claire Dubois',
+      email: 'claire.dubois@email.com',
+      phone: '+33 6 34 56 78 91',
+      dietaryRestrictions: ['Sans lactose'],
+      rsvpStatus: 'pending'
+    },
     tableNumber: '3',
-    numberOfGuests: 1,
-    dietaryRestrictions: 'Aucune',
+    numberOfGuests: 2,
     confirmationStatus: 'En attente',
     qrCode: 'PIERRE2025',
+    hasCompletedRSVP: false,
+    registrationDate: '2025-05-22',
+    // Champs legacy
+    name: 'Pierre & Claire Dubois',
+    email: 'pierre.dubois@email.com',
+    phone: '+33 6 34 56 78 90',
+    dietaryRestrictions: 'Sans lactose',
+  },
+  {
+    id: '4',
+    invitationType: 'single',
+    primaryGuest: {
+      name: 'Lucas Bernard',
+      email: 'lucas.bernard@email.com',
+      phone: '+33 6 45 67 89 01',
+      dietaryRestrictions: ['Sans gluten', 'Sans fruits de mer'],
+      rsvpStatus: 'declined'
+    },
+    tableNumber: '4',
+    numberOfGuests: 1,
+    confirmationStatus: 'Annulé',
+    qrCode: 'LUCAS2025',
+    hasCompletedRSVP: true,
+    registrationDate: '2025-05-19',
+    // Champs legacy
+    name: 'Lucas Bernard',
+    email: 'lucas.bernard@email.com',
+    phone: '+33 6 45 67 89 01',
+    dietaryRestrictions: 'Sans gluten, Sans fruits de mer',
   },
 ];
 

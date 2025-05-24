@@ -12,6 +12,49 @@ export default function Index() {
   // Récupérer les informations de l'invité authentifié
   const { guest } = useAuth();
   
+  // Fonctions utilitaires pour l'affichage adaptatif
+  const renderGuestNames = (guestData: any) => {
+    if (!guestData) return '';
+    
+    if (guestData.invitationType === 'couple') {
+      const primaryName = guestData.primaryGuest?.name?.split(' ')[0] || '';
+      const secondaryName = guestData.secondaryGuest?.name?.split(' ')[0] || '';
+      return `${primaryName} & ${secondaryName}`;
+    }
+    
+    return guestData.primaryGuest?.name?.split(' ')[0] || guestData.name?.split(' ')[0] || '';
+  };
+
+  const renderRSVPStatus = (guestData: any) => {
+    if (!guestData) return { status: 'unknown', color: 'text-gray-500', icon: 'help-circle' };
+    
+    if (guestData.invitationType === 'couple') {
+      const primaryStatus = guestData.primaryGuest?.rsvpStatus;
+      const secondaryStatus = guestData.secondaryGuest?.rsvpStatus;
+      
+      if (primaryStatus === 'confirmed' && secondaryStatus === 'confirmed') {
+        return { status: 'Vous serez tous les deux présents', color: 'text-green-600', icon: 'checkmark-circle' };
+      } else if (primaryStatus === 'declined' && secondaryStatus === 'declined') {
+        return { status: 'Vous ne pourrez pas venir', color: 'text-red-600', icon: 'close-circle' };
+      } else if (primaryStatus === 'confirmed' || secondaryStatus === 'confirmed') {
+        return { status: 'Présence partielle confirmée', color: 'text-orange-600', icon: 'warning' };
+      } else if (!guestData.hasCompletedRSVP) {
+        return { status: 'RSVP en attente', color: 'text-amber-600', icon: 'time' };
+      }
+    } else {
+      const status = guestData.primaryGuest?.rsvpStatus || guestData.confirmationStatus;
+      if (status === 'confirmed' || status === 'Confirmé') {
+        return { status: 'Présence confirmée', color: 'text-green-600', icon: 'checkmark-circle' };
+      } else if (status === 'declined' || status === 'Annulé') {
+        return { status: 'Absence confirmée', color: 'text-red-600', icon: 'close-circle' };
+      } else if (!guestData.hasCompletedRSVP) {
+        return { status: 'RSVP en attente', color: 'text-amber-600', icon: 'time' };
+      }
+    }
+    
+    return { status: 'Statut inconnu', color: 'text-gray-500', icon: 'help-circle' };
+  };
+
   // Date du mariage
   const eventDate = new Date(2025, 5, 15); // 15 juin 2025
   const today = new Date();
@@ -101,7 +144,7 @@ export default function Index() {
                   }}
                   className="text-amber-100 mb-1"
                 >
-                  Bonjour {guest.name.split(' ')[0]},
+                  Bonjour {renderGuestNames(guest)},
                 </Text>
               )}
               <Text 
@@ -126,6 +169,27 @@ export default function Index() {
               >
                 15 Juin 2025 • Château des Fleurs
               </Text>
+              
+              {/* Statut RSVP */}
+              {guest && (
+                <View className="flex-row items-center mt-3 px-3 py-2 bg-white/20 rounded-full">
+                  <Ionicons 
+                    name={renderRSVPStatus(guest).icon as any} 
+                    size={16} 
+                    color="white" 
+                  />
+                  <Text 
+                    style={{
+                      fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif',
+                      fontSize: 14,
+                      fontWeight: '500',
+                    }}
+                    className="text-white ml-2"
+                  >
+                    {renderRSVPStatus(guest).status}
+                  </Text>
+                </View>
+              )}
             </View>
           </BlurView>
         </Animated.View>
@@ -188,6 +252,39 @@ export default function Index() {
             Accès rapides
           </Text>
         </View>
+
+        {/* Carte RSVP prioritaire */}
+        {guest && !guest.hasCompletedRSVP && (
+          <View className="px-6 mb-4">
+            <Link href="/RSVPScreen" asChild>
+              <TouchableOpacity activeOpacity={0.9}>
+                <BlurView intensity={75} tint="light" className="rounded-2xl overflow-hidden">
+                  <LinearGradient
+                    colors={['#10b981', '#059669']}
+                    className="p-6"
+                  >
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-1">
+                        <Text className="text-white/90 text-sm font-medium mb-1">
+                          ACTION REQUISE
+                        </Text>
+                        <Text className="text-white text-xl font-bold mb-2">
+                          Confirmez votre présence
+                        </Text>
+                        <Text className="text-white/80 text-sm">
+                          Aidez-nous à organiser cette journée parfaite
+                        </Text>
+                      </View>
+                      <View className="bg-white/20 p-3 rounded-full ml-4">
+                        <Ionicons name="checkmark-circle" size={28} color="white" />
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </BlurView>
+              </TouchableOpacity>
+            </Link>
+          </View>
+        )}
         
         {/* Cartes de navigation style Apple */}
         <View className="px-6 gap-4">
